@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://www.dukelearntoprogram.com//course1/common/js/image/SimpleImage.js">
+    </script>
+    <a href="index.html"> <button>HOME</button></a>      
+    <p> <canvas id="c1">
+      </canvas> </p>
+    <canvas id="c2">
+    </canvas>
+    <p> <input type="file" multiple="false" accept="image/*" onchange="ubg()" id="bgimage"/> Upload the background image </p>
+    <p> <input type="file" multiple="false" accept="image/*" onchange="ufg()" id="fgimage"/> Upload the Green Background image </p>
+    <p> <input type="button"  value="Combine" onclick="combine()"/> <input type="button" value = "clear canvases" onclick="clearCanvases()"></p>   
+</body>
+<style>
+    canvas{
+        border: solid lightgrey 1px
+    }
+    body{
+        background-color: #5F5F0F
+    }
+</style>
+<script>
+    var filebg = document.getElementById("bgimage");
+    var filefg = document.getElementById("fgimage")
+    var image1;
+    var image2;
+
+    function ubg(){
+    image1 = new SimpleImage(filebg);
+    var canvas = document.getElementById("c1");
+    image1.drawTo(canvas);
+    }
+
+    function ufg(){
+    image2 = new SimpleImage(filefg);
+    var canvas = document.getElementById("c2");
+    image2.drawTo(canvas);
+    }
+    function combine(){
+    if (! image1.complete()){
+        alert("Image 1 is not complete")
+    }
+    if (! image2.complete()){
+        alert("Image 2 is not complete")
+    }
+    if(image1.complete && image2.complete){
+        image1.setSize(image2.getWidth(), image2.getHeight());
+        for (var pixel of image2.values()){
+        if (pixel.getGreen() > (pixel.getRed() + pixel.getBlue()-25)){
+            var x = pixel.getX();
+            var y = pixel.getY();
+            var backpix = image1.getPixel(x,y);
+            pixel.setRed(backpix.getRed());
+            pixel.setGreen(backpix.getGreen());
+            pixel.setBlue(backpix.getBlue());
+        }
+            
+        
+        
+            
+        
+        }
+        var canvas = document.getElementById("c2");
+        image2.drawTo(canvas)
+    }
+    else{
+        alert("couldn't do it")
+    }
+        
+    }
+    function clearCanvases(){
+    var canvas1 = document.getElementById("c1");
+    var canvas2 = document.getElementById("c2");
+    var ctx1 = canvas1.getContext("2d");
+    var ctx2 = canvas2.getContext("2d");
+    ctx1.clearRect(0,0,canvas1.width,canvas1.height);
+    ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+    }
+</script>
+</html>

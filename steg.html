@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://www.dukelearntoprogram.com//course1/common/js/image/SimpleImage.js">
+    </script>
+    <a href="index.html"> <button>HOME</button></a>
+    <p> Hide a Secret Image inside another Image
+    <p> <canvas id="c1">
+      </canvas>
+      <canvas id="c2">
+      </canvas>
+    </p>
+    <p>
+      Upload the secret File
+      <input type="file" accept = "image/*" multiple="false" id="Secretfile"/> 
+    </p>
+    <p>
+      Upload the Front File
+      <input type="file" accept = "image/*" multiple="false" onchange="upload()" id="Frontfile"/> 
+    </p>
+    <p>
+      <input type="button" value="Hide" onclick="Hide()"/>
+    </p>
+    
+    <p>
+      Download And Upload the The Pseudo Image Here To Retrieve The Secret Image </p>
+    <canvas id="c3">
+    </canvas>
+    <canvas id="c4">
+    </canvas>
+    <p>
+      <input type="file" accept="image/*" multiple="false" onchange="UploadNew()" id="newImg"/>
+    <input type="button" value="Unhide" onclick="Retransform()"/>
+    </p>    
+</body>
+<style>
+    canvas{
+    width:400px;
+    border: solid 1px
+    }
+    body{
+    background-color: lightgrey;
+    }
+    input{
+    font-size:1.5em;
+    }
+    p{
+    font-size: 25px;
+    font-family: Copperplate, Fantasy   
+    }
+</style>
+<script>
+    const canvas1 = document.getElementById("c1");
+    const canvas2 = document.getElementById("c2");
+    const canvas3 = document.getElementById("c3");
+    const canvas4 = document.getElementById("c4");
+    var frontfile = document.getElementById("Frontfile");
+    var secretfile = document.getElementById("Secretfile");
+    var secretimage;
+    var frontimage
+    var copy1;
+    var copy2;
+
+    // upload
+    function upload(){
+    frontimage = new SimpleImage(frontfile);
+    secretimage = new SimpleImage(secretfile);
+    frontimage.drawTo(canvas1);
+    }
+
+    // Crop the tamplets for both images in equal sizes
+    function crop(){
+    copy1 = new SimpleImage(secretimage.getWidth(), secretimage.getHeight());
+    copy2 = new SimpleImage(frontimage.getWidth(), frontimage.getHeight());
+    if ((copy1.getHeight()*copy1.getWidth()) > (copy2.getHeight()* copy2.getWidth())){
+        copy1.setSize(copy2.getWidth(), copy2.getHeight);
+    }else{
+        copy2.setSize(copy1.getWidth(), copy1.getHeight());
+        
+    }
+    }
+
+    // make copies
+    function copies(){
+    for (var pixel of copy2.values()){
+        pix2 = frontimage.getPixel(pixel.getX(), pixel.getY())
+        pixel.setRed(pix2.getRed());
+        pixel.setGreen(pix2.getGreen());
+        pixel.setBlue(pix2.getBlue());
+    }
+    for (var pixel2 of copy1.values()){
+        pix1 = secretimage.getPixel(pixel2.getX(), pixel2.getY())
+        pixel2.setRed(pix1.getRed());
+        pixel2.setGreen(pix1.getGreen());
+        pixel2.setBlue(pix1.getBlue());
+    }
+    }
+
+    // Shift Pixels
+    function Shift(){
+    for (var pixel of copy1.values()){
+        pixel.setRed(Math.floor(pixel.getRed()/16));
+        pixel.setGreen(Math.floor(pixel.getGreen()/16));
+        pixel.setBlue(Math.floor(pixel.getBlue()/16));
+    }
+    for (var pixel2 of copy2.values()){
+        pixel2.setRed(Math.floor(pixel2.getRed()/16)*16);
+        pixel2.setGreen(Math.floor(pixel2.getGreen()/16)*16);
+        pixel2.setBlue(Math.floor(pixel2.getBlue()/16)*16);
+    }
+    }
+
+    // Combine The images
+    function Combine(){
+    for (var pixel of copy2.values()){
+        var spix = copy1.getPixel(pixel.getX(), pixel.getY());
+        pixel.setRed(pixel.getRed()+spix.getRed());
+        pixel.setGreen(pixel.getGreen()+spix.getGreen());
+        pixel.setBlue(pixel.getBlue()+spix.getBlue());
+    }
+    }
+
+
+    // Combine
+    function Hide(){
+    crop(); 
+    alert("Loading 1/4");
+    copies();
+    alert("Loading 2/4");
+    Shift();
+    alert("Loading 3/4");
+    Combine();
+    copy2.drawTo(canvas2);
+    }
+
+    // Upload the New Image
+    const file = document.getElementById("newImg")
+    var img;
+    function UploadNew(){
+        img = new SimpleImage(file);
+        img.drawTo(canvas3);
+    }
+
+    // Retransform the Image Back
+    function Retransform(){
+    for (var pixel of img.values()){
+        pixel.setRed((pixel.getRed()%16)*16);
+        pixel.setGreen((pixel.getGreen()%16)*16);
+        pixel.setBlue((pixel.getBlue()%16)*16);
+    }
+    img.drawTo(canvas4);
+    }
+
+</script>
+</html>

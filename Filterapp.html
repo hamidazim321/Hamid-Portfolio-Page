@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    </head>
+
+    <body>
+    <script src="https://www.dukelearntoprogram.com//course1/common/js/image/SimpleImage.js">
+    </script>
+    <a href="index.html"> <button>HOME</button></a>
+    <div>
+      <h1> Upload a picture and try the filter </h1>
+    </div>
+    <p><canvas id="c1">
+      </canvas>
+    </p>
+    <p> Upload an Image </p>
+    <input type="file" multiple="false" accept="image/*" id="finput" onchange="loadImage()"/> 
+    <p> Click on a filter below to try it </p>
+    <p><input type="button" value="Greyscale" onclick="Greyscale()"/> <input type="button" value="Red" onclick="Red()"/><input type="button" value="Rainbow" onclick="Rainbow()"/><input type="button" value="Blur" onclick="Blur()"/></p>
+    <p><input type="button" value="Back To Original Image" onclick="OriginalImage()"/></p>
+    <p> <input type="button" value="Reset" onclick="Reset()">
+    
+    </body>
+    <style>
+        body{
+            background-color: #DEB887;
+        }
+        div{
+            border-bottom: solid;
+            border-width: 5px;
+            width: 490px;
+            padding-left: 1px;
+            margin-left: 100px
+        }
+        canvas{
+            border: solid 1px;
+            width: 900px
+        }
+        input[type="button"]{
+            font-size: 1.5em
+        }
+        input[type="file"]{
+            font-size: 1.5em
+        }
+        p{
+            font-size: 22px;
+            font-family: Halvetica, Sans-serif
+        }
+    </style>
+    <script>
+        var realImage = document.getElementById("finput");
+        var canvas = document.getElementById("c1");
+        var image;
+
+        // Load the Image
+        function loadImage() {
+        image = new SimpleImage(realImage);
+        image.drawTo(canvas);
+        }
+
+        // Make GreyScale
+        function Greyscale() {
+        var greyImage = new SimpleImage(image.getWidth(), image.getHeight()); // Create a new image
+        for (var pixel of image.values()) {
+            var average = (pixel.getRed() + pixel.getBlue() + pixel.getGreen()) / 3;
+            var greyPixel = greyImage.getPixel(pixel.getX(), pixel.getY()); // Get the corresponding pixel in the new image
+            greyPixel.setRed(average);
+            greyPixel.setBlue(average);
+            greyPixel.setGreen(average);
+        }
+        greyImage.drawTo(canvas);
+        }
+
+        // Back TO Original Image
+        function OriginalImage(){
+        image.drawTo(canvas);
+        }
+
+        // Red
+        function Red(){
+        var RedImage = new SimpleImage(image.getWidth(), image.getHeight());
+        for (var pixel of image.values()){
+            var green = pixel.getGreen();
+            var blue = pixel.getBlue();
+            var redpixel = RedImage.getPixel(pixel.getX(), pixel.getY());
+            redpixel.setRed(255);
+            redpixel.setGreen(green);
+            redpixel.setBlue(blue);
+        }
+        RedImage.drawTo(canvas);
+        }
+
+        // Rainbow
+        function Rainbow(){
+        var average = 0
+        var rainbow = new SimpleImage(image.getWidth(), image.getHeight());
+        var line = Number(Math.round(image.getHeight()/7));
+        for (var pixel of image.values()){
+            var red = Number(pixel.getRed());
+            var green = Number(pixel.getGreen());
+            var blue = Number(pixel.getBlue());
+            average = Math.round((blue + green + red)/3)
+            var rpixel = rainbow.getPixel(pixel.getX(), pixel.getY())
+            // Red
+            if (pixel.getY() <= line){
+            if (average < 128){
+            rpixel.setRed(2*average);
+            rpixel.setGreen(0);
+            rpixel.setBlue(0);
+            }
+            else{
+            rpixel.setRed(255);
+            rpixel.setGreen(2*average-255);
+            rpixel.setBlue(2*average-255);   
+            }
+            
+            }
+            // Orange
+            if (pixel.getY() > line && pixel.getY() <= 2*line){
+            if (average < 128){
+            rpixel.setRed(2*average);
+            rpixel.setGreen(0.8*average);
+            rpixel.setBlue(0);
+            }
+            else{
+            rpixel.setRed(255);
+            rpixel.setGreen(1.2*average-51);
+            rpixel.setBlue(2*average-255);   
+            }
+            }
+            
+            // Yellow
+            if (pixel.getY() > 2*line && pixel.getY() <= 3*line){
+            if (average < 128){
+            rpixel.setRed(2*average);
+            rpixel.setGreen(2*average);
+            rpixel.setBlue(0);
+            }
+            else{
+            rpixel.setRed(255);
+            rpixel.setGreen(255);
+            rpixel.setBlue(2*average-255);   
+            }
+            }
+            //Green
+            if (pixel.getY() > 3*line && pixel.getY() <= 4*line){
+            if (average < 128){
+            rpixel.setRed(0);
+            rpixel.setGreen(2*average);
+            rpixel.setBlue(0);
+            }
+            else{
+            rpixel.setRed(2*average);
+            rpixel.setGreen(255);
+            rpixel.setBlue(2*average-255);   
+            }
+            }
+            // Blue
+            if (pixel.getY() > 4*line && pixel.getY() <= 5*line){
+            if (average < 128){
+            rpixel.setRed(0);
+            rpixel.setGreen(0);
+            rpixel.setBlue(2*average);
+            }
+            else{
+            rpixel.setRed(2*average);
+            rpixel.setBlue(255);
+            rpixel.setGreen(2*average-255);   
+            }
+            }
+            // Indigo
+            if (pixel.getY() > 5*line && pixel.getY() <= 6*line){
+            if (average < 128){
+            rpixel.setRed(0.8*average);
+            rpixel.setBlue(2*average);
+            rpixel.setGreen(0);
+            }
+            else{
+            rpixel.setRed(1.2*average-51);
+            rpixel.setBlue(255);
+            rpixel.setGreen(2*average-255);   
+            }
+            }
+            // Violet
+            if (pixel.getY() > 6*line && pixel.getY() <= 7*line){
+            if (average < 128){
+            rpixel.setRed(1.6*average);
+            rpixel.setGreen(0);
+            rpixel.setBlue(1.6*average);
+            }
+            else{
+            rpixel.setRed(0.4*average+153);
+            rpixel.setBlue(255);
+            rpixel.setGreen(2*average-255);   
+            }
+            }
+            
+        }
+        rainbow.drawTo(canvas);
+        }
+        function Reset(){
+        var context = canvas.getContext("2d");
+        context.clearRect(0,0,canvas.width, canvas.height)
+        }
+        // Blur
+        function Blur(){
+        var BlurImage = new SimpleImage(image.getWidth(), image.getHeight());
+        var height = Number(Math.round(image.getHeight()/2));
+        var width = Number(Math.round(image.getWidth()/2));
+        
+        for (var pixel of image.values()){
+            var random = Math.random();
+            var xrandom = Math.ceil(Math.random() * 5);
+            var yrandom = Math.ceil(Math.random() * 5);
+        
+        if ((pixel.getX() <= width) && pixel.getY() <= height){
+            if (random < 0.5){
+            var x = Number(pixel.getX() + xrandom);
+            var y = Number(pixel.getY()+ yrandom);
+            var newpix = image.getPixel(x,y);
+            var red = newpix.getRed();
+            var green = newpix.getGreen();
+            var blue = newpix.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            
+            
+            }
+            else{
+            var red = pixel.getRed();
+            var green = pixel.getGreen();
+            var blue = pixel.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            
+            }
+        }
+            if ((pixel.getX() > width) && pixel.getY() <= height){
+            if (random < 0.5){
+                var x = Number(pixel.getX() -xrandom);
+            var y = Number(pixel.getY()+ yrandom);
+            var newpix = image.getPixel(x,y);
+            var red = newpix.getRed();
+            var green = newpix.getGreen();
+            var blue = newpix.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            }
+            else{
+            var red = pixel.getRed();
+            var green = pixel.getGreen();
+            var blue = pixel.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            }
+            }
+            if ((pixel.getX() <= width) && pixel.getY() > height){
+            if (random < 0.5){
+                var x = Number(pixel.getX() + xrandom);
+            var y = Number(pixel.getY()-yrandom);
+            var newpix = image.getPixel(x,y);
+            var red = newpix.getRed();
+            var green = newpix.getGreen();
+            var blue = newpix.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            }
+            else{
+            var red = pixel.getRed();
+            var green = pixel.getGreen();
+            var blue = pixel.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            }
+            }
+            if ((pixel.getX() > width) && pixel.getY() > height){
+            if (random < 0.5){
+                var x = Number(pixel.getX() -xrandom);
+            var y = Number(pixel.getY()- yrandom);
+            var newpix = image.getPixel(x,y);
+            var red = newpix.getRed();
+            var green = newpix.getGreen();
+            var blue = newpix.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            }
+            else{
+            var red = pixel.getRed();
+            var green = pixel.getGreen();
+            var blue = pixel.getBlue();
+            var blurpix = BlurImage.getPixel(pixel.getX(),pixel.getY());
+            blurpix.setRed(red);
+            blurpix.setGreen(green);
+            blurpix.setBlue(blue);
+            }
+            }
+        }
+        BlurImage.drawTo(canvas);
+        }
+
+    </script>
+</html>
